@@ -10,4 +10,4 @@ class BookViewSet(ModelViewSet):
     serializer_class = BooksSerializer
     # Устанавливаем фильтры
     filter_backends = [DjangoFilterBackend]
-    filter_fields = ['price']
+    filterset_fields = ['price']
