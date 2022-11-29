@@ -32,6 +32,16 @@ class BooksApiTestCase(APITestCase):
     # Тест фильтров
     def test_get_filter(self):
         url = reverse('book-list')
+        response = self.client.get(url, data={'price': 55})
+        serializer_data = BooksSerializer([self.book_2,
+                                           self.book_3], many=True).data
+        self.assertEqual(serializer_data, response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+
+    # Тест поиска
+    def test_get_search(self):
+        url = reverse('book-list')
         response = self.client.get(url, data={'search': 'Author 1'})
         serializer_data = BooksSerializer([self.book_1,
                                            self.book_3], many=True).data
