@@ -47,3 +47,14 @@ class BooksApiTestCase(APITestCase):
                                            self.book_3], many=True).data
         self.assertEqual(serializer_data, response.data)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+
+    # Тест сортировки
+    def test_get_order(self):
+        url = reverse('book-list')
+        response = self.client.get(url, data={'ordering': 'author_name'})
+        serializer_data = BooksSerializer([self.book_1,
+                                           self.book_3,
+                                           self.book_2], many=True).data
+        self.assertEqual(serializer_data, response.data)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
