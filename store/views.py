@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 
 from store.models import Book
@@ -10,6 +10,10 @@ class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BooksSerializer
     # Устанавливаем фильтры
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    # Фильтрация по цене
     filterset_fields = ['price']
+    # Поиск по имени и автору
     search_fields = ['name', 'author_name']
+    # Сортировка по цене и автору
+    ordering_fields = ['price', 'author_name']
