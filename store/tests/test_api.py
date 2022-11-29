@@ -12,10 +12,12 @@ class BooksApiTestCase(APITestCase):
         self.book_1 = Book.objects.create(name='Test book 1', price=25,
                                           author_name='Author 1')
         self.book_2 = Book.objects.create(name='Test book 2', price=55,
-                                          author_name='Author 1')
-        self.book_3 = Book.objects.create(name='Test book 3', price=55,
+                                          author_name='Author 5')
+        self.book_3 = Book.objects.create(name='Test book Author 1', price=55,
                                           author_name='Author 2')
 
+
+    # Тест запроса
     def test_get(self):
         # Тестируем ответ от url localhost/book/
         url = reverse('book-list')
@@ -24,4 +26,14 @@ class BooksApiTestCase(APITestCase):
         serializer_data = BooksSerializer([self.book_1, self.book_2, self.book_3], many=True).data
         self.assertEqual(serializer_data, response.data)
         # Тестируем код ответа сервера
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+
+    # Тест фильтров
+    def test_get_filter(self):
+        url = reverse('book-list')
+        response = self.client.get(url, data={'search': 'Author 1'})
+        serializer_data = BooksSerializer([self.book_1,
+                                           self.book_3], many=True).data
+        self.assertEqual(serializer_data, response.data)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
