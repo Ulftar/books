@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
@@ -20,3 +21,8 @@ class BookViewSet(ModelViewSet):
     search_fields = ['name', 'author_name']
     # Сортировка по цене и автору
     ordering_fields = ['price', 'author_name']
+
+
+# Аутентификация ГитХаб
+def auth(request):
+    return render(request, 'oauth.html')
