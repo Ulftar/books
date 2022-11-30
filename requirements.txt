@@ -3,3 +3,4 @@ psycopg2
 djangorestframework
 django-filter
 coverage
+social-auth-app-django
