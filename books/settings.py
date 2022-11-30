@@ -85,6 +85,14 @@ DATABASES = {
     }
 }
 
+# Аутентификация
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -138,3 +146,7 @@ REST_FRAMEWORK = {
 
 # Используем встроенное поле JSONB для хранения извлеченных файлов extra_data Postges
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
+
+# Ключи для аутентификации на Гитхабе
+SOCIAL_AUTH_GITHUB_KEY = 'a1b2c3d4'
+SOCIAL_AUTH_GITHUB_SECRET = 'e5f6g7h8i9'
