@@ -135,3 +135,6 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     )
 }
+
+# Используем встроенное поле JSONB для хранения извлеченных файлов extra_data Postges
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
