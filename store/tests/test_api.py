@@ -88,6 +88,8 @@ class BooksApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         # Смотрим количество книг выполнения запроса
         self.assertEqual(4, Book.objects.all().count())
+        # Сравниваем что пользователь стал владельцем книги при создании
+        self.assertEqual(self.user, Book.objects.last().owner)
 
 
     # Тест запроса на изменение книги
