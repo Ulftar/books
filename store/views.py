@@ -22,6 +22,12 @@ class BookViewSet(ModelViewSet):
     # Сортировка по цене и автору
     ordering_fields = ['price', 'author_name']
 
+    # Добавляем права овнера при создании книги
+    def perform_create(self, serializer):
+        # Создавать книгу может только авторизованный пользователь, поэтому добаляем user
+        serializer.validated_data['owner'] = self.request.user
+        serializer.save()
+
 
 # Аутентификация ГитХаб
 def auth(request):
