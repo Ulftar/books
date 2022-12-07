@@ -71,7 +71,7 @@ class BooksApiTestCase(APITestCase):
         self.assertEqual(3, Book.objects.all().count())
         # Тестируем ответ от url localhost/book/
         url = reverse('book-list')
-        # Пытаемся создать книгу
+        # Данные для создания книги
         data = {
             'name': 'Программирование на Пайтоне',
             'price': 150,
@@ -86,6 +86,30 @@ class BooksApiTestCase(APITestCase):
                                    content_type='application/json')
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        # Смотрим еоличество книг выполнения запроса
+        # Смотрим количество книг выполнения запроса
         self.assertEqual(4, Book.objects.all().count())
 
+
+    # Тест запроса на изменение книги
+    def test_update(self):
+        # Указываем айди объекта для запроса. Чтобы урл содержал в себе айди указываем book-detail
+        url = reverse('book-detail', args=(self.book_1.id,))
+        # Данные для изменения книги
+        data = {
+            'name': self.book_1.name,
+            'price': 575,
+            'author_name': self.book_1.author_name
+        }
+        # Преобразуем данные в json
+        json_data = json.dumps(data)
+        # Насильно авторизовываемся
+        self.client.force_login(self.user)
+        # Отправляем пут запрос
+        response = self.client.put(url, data=json_data,
+                                   content_type='application/json')
+        # Проверяем код ответа от сервера
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # Пересоздаем объект в базе данных для действительного изменения цены
+        self.book_1.refresh_from_db()
+        # Проверяем что цена действительно изменилась
+        self.assertEqual(575, self.book_1.price)
