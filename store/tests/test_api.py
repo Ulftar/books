@@ -15,7 +15,8 @@ class BooksApiTestCase(APITestCase):
         self.user = User.objects.create(username='test_username')
         # Создаем с помощью ОРМ тестовый список книг
         self.book_1 = Book.objects.create(name='Test book 1', price=25,
-                                          author_name='Author 1')
+                                          author_name='Author 1',
+                                          owner=self.user)
         self.book_2 = Book.objects.create(name='Test book 2', price=55,
                                           author_name='Author 5')
         self.book_3 = Book.objects.create(name='Test book Author 1', price=55,
