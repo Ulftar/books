@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.viewsets import ModelViewSet
 
 from store.models import Book
+from store.permissions import IsOwnerOrReadOnly
 from store.serializers import BooksSerializer
 
 
@@ -14,7 +15,7 @@ class BookViewSet(ModelViewSet):
     # Устанавливаем фильтры
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     # Проверка аутентификации
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
     # Фильтрация по цене
     filterset_fields = ['price']
     # Поиск по имени и автору
