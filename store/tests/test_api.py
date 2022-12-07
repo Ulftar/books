@@ -113,3 +113,28 @@ class BooksApiTestCase(APITestCase):
         self.book_1.refresh_from_db()
         # Проверяем что цена действительно изменилась
         self.assertEqual(575, self.book_1.price)
+
+
+    # Тест запроса на удаление книги
+    def test_delete(self):
+        # Смотрим текущее количество книг в базе
+        self.assertEqual(3, Book.objects.all().count())
+        # Указываем айди объекта для запроса. Чтобы урл содержал в себе айди указываем book-detail
+        url = reverse('book-detail', args=(self.book_1.id,))
+        # Данные для удаления книги
+        data = {
+            'name': self.book_1.name,
+            'price': self.book_1.price,
+            'author_name': self.book_1.author_name
+        }
+        # Преобразуем данные в json
+        json_data = json.dumps(data)
+        # Насильно авторизовываемся
+        self.client.force_login(self.user)
+        # Отправляем пост запрос
+        response = self.client.delete(url, data=json_data,
+                                    content_type='application/json')
+        # Проверяем код ответа от сервера
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        # Смотрим количество книг выполнения запроса
+        self.assertEqual(2, Book.objects.all().count())
