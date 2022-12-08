@@ -35,3 +35,7 @@ class UserBookRelation(models.Model):
     like = models.BooleanField(default=False)
     in_bookmarks = models.BooleanField(default=False)
     rate = models.PositiveSmallIntegerField(choices=RATE_CHOICES)
+
+    # Настраиваем отображение рейтов в админке
+    def __str__(self):
+        return f'{self.user.username}: {self.book.name}, Rate: {self.rate}'
