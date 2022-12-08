@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from store.models import Book
-from store.permissions import IsOwnerOrReadOnly
+from store.permissions import IsOwnerOrStaffOrReadOnly
 from store.serializers import BooksSerializer
 
 
@@ -15,7 +14,7 @@ class BookViewSet(ModelViewSet):
     # Устанавливаем фильтры
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     # Проверка аутентификации
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrStaffOrReadOnly]
     # Фильтрация по цене
     filterset_fields = ['price']
     # Поиск по имени и автору
