@@ -142,6 +142,34 @@ class BooksApiTestCase(APITestCase):
         self.assertEqual(25, self.book_1.price)
 
 
+    # Тест апдейта персоналом компании
+    def test_update_not_owner_but_staff(self):
+        # Создаем пользователся
+        self.user2 = User.objects.create(username='test_username2',
+                                         is_staff=True)
+        # Указываем айди объекта для запроса. Чтобы урл содержал в себе айди указываем book-detail
+        url = reverse('book-detail', args=(self.book_1.id,))
+        # Данные для изменения книги
+        data = {
+            'name': self.book_1.name,
+            'price': 575,
+            'author_name': self.book_1.author_name
+        }
+        # Преобразуем данные в json
+        json_data = json.dumps(data)
+        # Авторизуем юзера, не владельца книги
+        self.client.force_login(self.user2)
+        # Отправляем пут запрос
+        response = self.client.put(url, data=json_data,
+                                   content_type='application/json')
+        # Проверяем код ответа от сервера
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # Пересоздаем объект в базе данных для действительного изменения цены
+        self.book_1.refresh_from_db()
+        # Проверяем что цена не изменилась, так как у не овнера нет прав на изменение
+        self.assertEqual(575, self.book_1.price)
+
+
     # Тест запроса на удаление книги
     def test_delete(self):
         # Смотрим текущее количество книг в базе
