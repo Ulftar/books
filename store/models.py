@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+# Модель книги
 class Book(models.Model):
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=7, decimal_places=2)
@@ -15,3 +16,22 @@ class Book(models.Model):
     # Настраиваем отображение книг в админке, ID: название.
     def __str__(self):
         return f'Id {self.id}: {self.name}'
+
+
+# Модель лайков
+class UserBookRelation(models.Model):
+    # Первый элемент вложенного кортежа - значение рейтинга, которое хранится в базе
+    # Второй - значение рейтинга, которое мы отрисуем
+    RATE_CHOICES = (
+        (1, 'Нормально'),
+        (2, 'Неплохо'),
+        (3, 'Хорошо'),
+        (4, 'Отлично'),
+        (5, 'Замечательно')
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
+    in_bookmarks = models.BooleanField(default=False)
+    rate = models.PositiveSmallIntegerField(choices=RATE_CHOICES)
