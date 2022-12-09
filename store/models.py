@@ -11,7 +11,12 @@ class Book(models.Model):
     # ForeignKey - связь один уо многим, у одного юзера может быть создано несколько книг
     # on_delete - параметр, отвечающий за дествия после удаления юзера, книги могут существовать дальше
     owner = models.ForeignKey(User, on_delete=models.SET_NULL,
-                              null=True)
+                              null=True, related_name='my_books')
+    # Читатели, отношение many to many, у книги может быть много читателей
+    # В директиве trough прописываем нашу модель отношений
+    # Задаем разные related names, потому что владелец и читатели ссылаются на юзера
+    readers = models.ManyToManyField(User, through='UserBookRelation',
+                                     related_name='books')
 
     # Настраиваем отображение книг в админке, ID: название.
     def __str__(self):
