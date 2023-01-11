@@ -37,8 +37,18 @@ class UserBooksRelationView(UpdateModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticated]
     queryset = UserBookRelation.objects.all()
     serializer_class = UserBookRelationSerializer
+    # Передаём айди книги для удобства взаимодействия с фронтом
     lookup_field = 'book'
 
+# Метод получения лайка
+    def get_object(self):
+        # Находим лайк или создаём новый, для этого добавляем нижнее подчеркивание
+        # Ставить лайк может только авторизованный пользователь, поэтому добаляем user
+        # book пришел через url
+        # book пришел через lookup_field и попал в self.kwargs['book']
+        obj, _ = UserBookRelation.objects.get_or_create(user=self.request.user,
+                                                        book_id=self.kwargs['book'])
+        return obj
 
 # Аутентификация ГитХаб
 def auth(request):
