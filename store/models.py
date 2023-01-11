@@ -39,7 +39,8 @@ class UserBookRelation(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     like = models.BooleanField(default=False)
     in_bookmarks = models.BooleanField(default=False)
-    rate = models.PositiveSmallIntegerField(choices=RATE_CHOICES)
+    # Рейтинг может быть пустым, добавляем null=True
+    rate = models.PositiveSmallIntegerField(choices=RATE_CHOICES, null=True)
 
     # Настраиваем отображение рейтов в админке
     def __str__(self):
