@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APITestCase
 
-from store.models import Book
+from store.models import Book, UserBookRelation
 from store.serializers import BooksSerializer
 
 
@@ -141,7 +141,6 @@ class BooksApiTestCase(APITestCase):
         # Проверяем что цена не изменилась, так как у не овнера нет прав на изменение
         self.assertEqual(25, self.book_1.price)
 
-
     # Тест апдейта персоналом компании
     def test_update_not_owner_but_staff(self):
         # Создаем пользователся
@@ -169,7 +168,6 @@ class BooksApiTestCase(APITestCase):
         # Проверяем что цена не изменилась, так как у не овнера нет прав на изменение
         self.assertEqual(575, self.book_1.price)
 
-
     # Тест запроса на удаление книги
     def test_delete(self):
         # Смотрим текущее количество книг в базе
@@ -193,7 +191,6 @@ class BooksApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
         # Смотрим количество книг выполнения запроса
         self.assertEqual(2, Book.objects.all().count())
-
 
     # Тест негативного сценария удаления
     def test_delete_not_owner(self):
@@ -223,3 +220,41 @@ class BooksApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         # Смотрим количество книг выполнения запроса
         self.assertEqual(3, Book.objects.all().count())
+
+
+class BooksRelationTestCase(APITestCase):
+    def setUp(self):
+        # Создаем пользователей
+        self.user = User.objects.create(username='test_username', )
+        self.user2 = User.objects.create(username='test_username2', )
+        # Создаем с помощью ОРМ тестовый список книг
+        self.book_1 = Book.objects.create(name='Test book 1', price=25,
+                                          author_name='Author 1',
+                                          owner=self.user)
+        self.book_2 = Book.objects.create(name='Test book 2', price=55,
+                                          author_name='Author 5')
+
+    # Тест запроса
+    def test_like(self):
+        # Тестируем ответ от url localhost/book_relation/
+        # Указываем айди объекта для запроса.
+        url = reverse('userbookrelation-detail', args=(self.book_1.id,))
+
+        data = {
+            'like': True,
+        }
+        # Преобразуем данные в json
+        json_data = json.dumps(data)
+
+        # Насильно авторизовываемся
+        self.client.force_login(self.user)
+        # Обновляем данные модели, используем patch, т.к. обновляем один элемент
+        response = self.client.patch(url, data=json_data,
+                                     content_type='application/json')
+        # Тестируем код ответа сервера
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # Берем данные из бази
+        relation = UserBookRelation.objects.get(user=self.user,
+                                                book=self.book_1)
+        # Проверяем наличие лайка у релейшена, по умолчанию его нет (false)
+        self.assertTrue(relation.like)
