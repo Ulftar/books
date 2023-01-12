@@ -321,3 +321,28 @@ class BooksRelationTestCase(APITestCase):
                                                 book=self.book_1)
         # Проверяем рейт
         self.assertEqual(3, relation.rate)
+
+    # Негативный тест рейта
+    def test_rate_wrong(self):
+        # Тестируем ответ от url localhost/book_relation/
+        # Указываем айди объекта для запроса.
+        url = reverse('userbookrelation-detail', args=(self.book_1.id,))
+
+        data = {
+            'rate': 6,
+        }
+        # Преобразуем данные в json
+        json_data = json.dumps(data)
+
+        # Насильно авторизовываемся
+        self.client.force_login(self.user)
+        # Обновляем данные модели, используем patch, т.к. обновляем один элемент
+        response = self.client.patch(url, data=json_data,
+                                     content_type='application/json')
+        # Тестируем код ответа сервера. Третим аргументом задаем сообщение, если проверка не прошла
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.data)
+        # Берем данные из базы
+        relation = UserBookRelation.objects.get(user=self.user,
+                                                book=self.book_1)
+        # Проверяем рейт
+        self.assertEqual(3, relation.rate)
