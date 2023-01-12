@@ -258,3 +258,16 @@ class BooksRelationTestCase(APITestCase):
                                                 book=self.book_1)
         # Проверяем наличие лайка у релейшена, по умолчанию его нет (false)
         self.assertTrue(relation.like)
+
+        # Проверяем добавление в закладки
+        data = {
+            'in_bookmarks': True,
+        }
+        json_data = json.dumps(data)
+
+        response = self.client.patch(url, data=json_data,
+                                     content_type='application/json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        relation = UserBookRelation.objects.get(user=self.user,
+                                                book=self.book_1)
+        self.assertTrue(relation.in_bookmarks)
