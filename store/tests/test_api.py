@@ -271,3 +271,53 @@ class BooksRelationTestCase(APITestCase):
         relation = UserBookRelation.objects.get(user=self.user,
                                                 book=self.book_1)
         self.assertTrue(relation.in_bookmarks)
+
+
+    # Тест рейта
+    def test_rate(self):
+        # Тестируем ответ от url localhost/book_relation/
+        # Указываем айди объекта для запроса.
+        url = reverse('userbookrelation-detail', args=(self.book_1.id,))
+
+        data = {
+            'rate': 3,
+        }
+        # Преобразуем данные в json
+        json_data = json.dumps(data)
+
+        # Насильно авторизовываемся
+        self.client.force_login(self.user)
+        # Обновляем данные модели, используем patch, т.к. обновляем один элемент
+        response = self.client.patch(url, data=json_data,
+                                     content_type='application/json')
+        # Тестируем код ответа сервера
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # Берем данные из базы
+        relation = UserBookRelation.objects.get(user=self.user,
+                                                book=self.book_1)
+        # Проверяем рейт
+        self.assertEqual(3, relation.rate)
+
+    def test_rate(self):
+        # Тестируем ответ от url localhost/book_relation/
+        # Указываем айди объекта для запроса.
+        url = reverse('userbookrelation-detail', args=(self.book_1.id,))
+
+        data = {
+            'rate': 3,
+        }
+        # Преобразуем данные в json
+        json_data = json.dumps(data)
+
+        # Насильно авторизовываемся
+        self.client.force_login(self.user)
+        # Обновляем данные модели, используем patch, т.к. обновляем один элемент
+        response = self.client.patch(url, data=json_data,
+                                     content_type='application/json')
+        # Тестируем код ответа сервера
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        # Берем данные из базы
+        relation = UserBookRelation.objects.get(user=self.user,
+                                                book=self.book_1)
+        # Проверяем рейт
+        self.assertEqual(3, relation.rate)
